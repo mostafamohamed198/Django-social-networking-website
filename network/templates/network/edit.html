@@ -1,0 +1,12 @@
+{% extends "network/layout.html" %}
+
+
+{% block body %}
+<div class="container">
+<form  method="POST">
+    {% csrf_token %}
+        <textarea  name = "edit">{{posttoedit.post}}</textarea>
+        <input type="submit" action = "index">
+</form>
+</div>
+{% endblock %}

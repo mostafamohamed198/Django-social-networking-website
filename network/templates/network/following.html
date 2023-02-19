@@ -1,0 +1,14 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<div class="container">
+{% if not xy.exists %}
+<h3> You are not following any user </h3>
+{% else %}
+{% for object in xy%}
+<ul><li><a href="{% url 'follow' object.following %}">{{object.following}}</a></li></ul>
+
+{% endfor %}
+{% endif %}
+</div>
+{% endblock %}

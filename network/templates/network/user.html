@@ -1,0 +1,244 @@
+{% extends "network/layout.html" %}
+
+{% block script %}
+<script>
+            document.addEventListener('DOMContentLoaded',function(){
+                document.querySelectorAll('input').forEach(input =>{
+                    let fol = true;
+                    if (input.value == 'follow'){
+                        console.log('follow')
+                        fol = true;
+                    }
+                    else { 
+                        console.log('unfollow')
+                        fol = false;
+                    }
+                    input.addEventListener('click', function(){
+                        if (fol){
+                            fetch('/follow/'+ input.id, {
+                            method:'PUT',
+                            body: JSON.stringify({
+                                follow: true
+                            })
+                        })
+                        input.value='unfollow'
+                        }
+                        else{
+                            fetch('/follow/'+ input.id, {
+                            method:'PUT',
+                            body: JSON.stringify({
+                                unfollow: true
+                            })
+                        })
+                        input.value = 'follow'  
+                }
+                        }
+                )})
+                } 
+                )
+            ;
+document.addEventListener('DOMContentLoaded',function(){
+    window.addEventListener('load', function(){
+    document.querySelector('#likesdiv').querySelectorAll('button').forEach(input =>{
+    console.log('sl')
+    let like__btn = true;
+    if (input.value == 'like__btn'){
+        like__btn = true;
+        console.log('like')
+    }
+    else { 
+        like__btn = false;
+        console.log('liked')
+    }
+    
+    input.addEventListener('click', function(){
+        if (like__btn){
+            console.log('clicked');
+                console.log(input.id);
+                fetch('/like/' + input.id , {
+                method:'PUT',
+                body: JSON.stringify({
+                    like: true
+                })
+            })
+                input.innerHTML = ' <span id="icon"><i class="fa-regular fa-thumbs-up"></i></span>liked'
+                input.classList.remove('like__btn') 
+                input.classList.add('liked__btn')
+                input.value = 'liked__btn'
+                console.log('changed')
+        }
+        else {
+            console.log('clicked');
+                console.log(input.id);
+                fetch('/like/' + input.id , {
+                method:'PUT',
+                body: JSON.stringify({
+                    notlike: true
+                })})
+                input.innerHTML = ' <span id="icon"><i class="fa-regular fa-thumbs-up"></i></span>like'
+                input.classList.remove('liked__btn') 
+                input.classList.add('like__btn')
+                input.value = 'like__btn'
+                console.log('unchan')
+                
+        }
+    }
+)})
+document.querySelector('#unlikesdiv').querySelectorAll('button').forEach(button =>{
+    console.log('sl')
+    let unlike__btn = true;
+    if (button.value == 'unlike__btn'){
+        unlike__btn = true;
+        console.log(unlike__btn)
+    }
+    else { 
+        unlike__btn = false;
+        console.log(unlike__btn)
+    }
+    
+    button.addEventListener('click', function(){
+        if (unlike__btn){
+            console.log('clicked');
+                console.log(button.id);
+                fetch('/like/' + button.id , {
+                method:'PUT',
+                body: JSON.stringify({
+                    unlike: true
+                })})
+                button.innerHTML = ' <span id="icon"><i class="fa-regular fa-thumbs-up"></i></span>unliked'
+                button.classList.remove('unlike__btn') 
+                button.classList.add('unliked__btn')
+                button.value = 'unliked__btn'
+        }
+        else {
+            console.log('clicked');
+                console.log(button.id);
+                fetch('/like/' + button.id , {
+                method:'PUT',
+                body: JSON.stringify({
+                    notunlike: true
+                })})
+                button.innerHTML = ' <span id="icon"><i class="fa-regular fa-thumbs-up"></i></span>unlike'
+                button.classList.remove('unliked__btn') 
+                button.classList.add('unlike__btn')
+                button.value = 'unlike__btn'
+        }
+    }
+)})
+})
+})
+
+    
+    
+</script>
+{% endblock %}
+
+{% block body %}
+
+
+<style>
+.like__btn{
+    padding: 10px 15px;
+    background: rgb(32,42,68);
+    font-size: 18px;
+    font-family:'Open Sans', 'sans-serif';
+    border:none;
+    color:white;
+    border-radius: 10px;
+    cursor: pointer;
+    outline:none;
+}
+.liked__btn{
+    padding: 10px 15px;
+    background: rgb(255, 255, 255);
+    font-size: 18px;
+    font-family:'Open Sans', 'sans-serif';
+    border-color:rgb(32,42,68);
+    color:rgb(32,42,68);
+    border-radius: 10px;
+    cursor: pointer;
+    outline:none;
+}
+.unlike__btn{
+    padding: 10px 15px;
+    background: rgb(32,42,68);
+    font-size: 18px;
+    font-family:'Open Sans', 'sans-serif';
+    border:none;
+    color:white;
+    border-radius: 10px;
+    cursor: pointer;
+    outline:none;
+}
+.unliked__btn{
+    padding: 10px 15px;
+    background: rgb(255, 255, 255);
+    font-size: 18px;
+    font-family:'Open Sans', 'sans-serif';
+    border-color:rgb(32,42,68);
+    color:rgb(32,42,68);
+    border-radius: 10px;
+    cursor: pointer;
+    outline:none;
+}
+</style>
+<div class="container">
+<h2>{{x.username}}</h2>
+<form>
+    {% csrf_token %}
+    <input type="button" value={{l}} name ="follow" id={{x.username}}>
+</form>
+<h4>followers:</h4><p>{{followers.count}}</p>
+<h4>following:</h4><p>{{following.count}}</p>
+{% for post in user_posts %}
+
+
+    <div>
+    <p>{{post.id}}</p>
+    <p>{{post.writer}}</p>
+    <p>{{post.post}}</p>
+    <p>{{post.timestamp}}</p>
+
+    <div id="likesdiv">
+    {% if request.user in post.likers.all %}
+    <button value = "liked__btn"class="liked__btn" id={{post.id}}>
+        <span id="icon"><i class="fa-regular fa-thumbs-up"></i></span>liked
+            <span id="count">{{post.likers.all.count}}</span> 
+    </button>
+    {% else %}
+    <button value = "like__btn" class="like__btn" id={{post.id}}>
+        <span id="icon"><i class="fa-regular fa-thumbs-up"></i></span>like
+            <span id="count">{{post.likers.all.count}}</span> 
+    </button>
+    {% endif %}
+
+    </div>
+
+    <div id='unlikesdiv'>
+    {% if request.user in post.unlikers.all %}
+    <button value = "unliked__btn" class="unliked__btn" id={{post.id}}>
+        <span id="icon"><i class="fa-regular fa-thumbs-down"></i></span>unliked
+            <span id="count">{{post.unlikers.all.count}}</span> 
+    </button>
+    {% else %}
+    <button value = "unlike__btn" class="unlike__btn" id={{post.id}}>
+        <span id="icon"><i class="fa-regular fa-thumbs-down"></i></span>unlike
+            <span id="count">{{post.unlikers.all.count}}</span> 
+    </button>
+    {% endif %}
+    </div>
+    </div>
+    {% if post.writer == user %}
+    <a href="{% url 'edit' post.id%}"><button>edit</button></a>
+    {% endif %}
+    {%endfor %}
+    
+    </ul>
+</nav>
+
+</div>
+</div>
+
+
+{% endblock %}
+
